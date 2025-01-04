@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>User Not Found</h2>
+    <p>The user with ID {{ user_id }} was not found.</p>
+    <a href="{{ url_for('home') }}" class="btn btn-primary">Back to Home</a>
+{% endblock content %}
