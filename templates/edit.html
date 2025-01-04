@@ -1,23 +1,33 @@
 {% extends 'base.html' %}
- 
+
 {% block content %}
-    <form action="/update/{{user.id}}" method="post">
-        <div class="mb-3">
-            <label>Name</label>
-            <input type="text" name="name" placeholder="Name" class="form-control" value="{{user.name}}"/>
-        </div> 
-        <div class="mb-3">
-            <label>Description</label>
-            <input type="text" name="description" placeholder="Description" class="form-control" value="{{user.description}}"/>
-        </div> 
-        <div class="mb-3">
-            <label>Progress</label>
-            <select name="progress" class="form-control">
-                <option value="open" {% if user.progress == 'open' %}selected{% endif %}>Open</option>
-                <option value="in progress" {% if user.progress == 'in progress' %}selected{% endif %}>In Progress</option>
-                <option value="completed" {% if user.progress == 'completed' %}selected{% endif %}>Completed</option>
-            </select>
-        </div>
-        <input type="submit" value="Update" class="btn btn-primary mb-3"/>  
-    </form> 
+<!-- Formulário para atualizar os dados de um usuário existente -->
+<form action="/update/{{user.id}}" method="post">
+    <div class="mb-3">
+        <!-- Campo para editar o nome do usuário -->
+        <label>Name</label>
+        <!-- O valor do campo é preenchido com o nome atual do usuário -->
+        <input type="text" name="name" placeholder="Name" class="form-control" value="{{user.name}}"/>
+    </div> 
+    <div class="mb-3">
+        <!-- Campo para editar a descrição do usuário -->
+        <label>Description</label>
+        <!-- O valor do campo é preenchido com a descrição atual do usuário -->
+        <input type="text" name="description" placeholder="Description" class="form-control" value="{{user.description}}"/>
+    </div> 
+    <div class="mb-3">
+        <!-- Campo para selecionar o progresso do usuário -->
+        <label>Progress</label>
+        <select name="progress" class="form-control">
+            <!-- O valor de 'Open' é selecionado se o progresso atual do usuário for 'open' -->
+            <option value="open" {% if user.progress == 'open' %}selected{% endif %}>Open</option>
+            <!-- O valor de 'In Progress' é selecionado se o progresso atual do usuário for 'in progress' -->
+            <option value="in progress" {% if user.progress == 'in progress' %}selected{% endif %}>In Progress</option>
+            <!-- O valor de 'Completed' é selecionado se o progresso atual do usuário for 'completed' -->
+            <option value="completed" {% if user.progress == 'completed' %}selected{% endif %}>Completed</option>
+        </select>
+    </div>
+    <!-- Botão para enviar o formulário e atualizar as informações do usuário -->
+    <input type="submit" value="Update" class="btn btn-primary mb-3"/>  
+</form> 
 {% endblock content %}

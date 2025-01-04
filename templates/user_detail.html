@@ -1,33 +1,44 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="container mt-4">
-        <div class="card">
-            <div class="card-header">
-                <h3>User Details</h3>
-            </div>
-            <div class="card-body">
-                <dl class="row">
-                    <dt class="col-sm-3">ID:</dt>
-                    <dd class="col-sm-9">{{ user.id }}</dd>
+<!-- Container principal com margem superior -->
+<div class="container mt-4">
+    <!-- Cartão para exibir os detalhes do usuário -->
+    <div class="card">
+        <!-- Cabeçalho do cartão com o título 'User Details' -->
+        <div class="card-header">
+            <h3>User Details</h3>
+        </div>
+        <div class="card-body">
+            <!-- Lista de detalhes do usuário -->
+            <dl class="row">
+                <!-- Exibindo o ID do usuário -->
+                <dt class="col-sm-3">ID:</dt>
+                <dd class="col-sm-9">{{ user.id }}</dd>
 
-                    <dt class="col-sm-3">Name:</dt>
-                    <dd class="col-sm-9">{{ user.name }}</dd>
+                <!-- Exibindo o nome do usuário -->
+                <dt class="col-sm-3">Name:</dt>
+                <dd class="col-sm-9">{{ user.name }}</dd>
 
-                    <dt class="col-sm-3">Description:</dt>
-                    <dd class="col-sm-9">{{ user.description }}</dd>
+                <!-- Exibindo a descrição do usuário -->
+                <dt class="col-sm-3">Description:</dt>
+                <dd class="col-sm-9">{{ user.description }}</dd>
 
-                    <dt class="col-sm-3">Progress:</dt>
-                    <dd class="col-sm-9">{{ user.progress }}</dd>
+                <!-- Exibindo o progresso do usuário -->
+                <dt class="col-sm-3">Progress:</dt>
+                <dd class="col-sm-9">{{ user.progress }}</dd>
 
-                    <dt class="col-sm-3">Created At:</dt>
-                    <dd class="col-sm-9">{{ user.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</dd>
+                <!-- Exibindo a data de criação -->
+                <dt class="col-sm-3">Created At:</dt>
+                <dd class="col-sm-9">{{ user.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</dd>
 
-                    <dt class="col-sm-3">Updated At:</dt>
-                    <dd class="col-sm-9">{{ user.updated_at.strftime("%Y-%m-%d %H:%M:%S") }}</dd>
-                </dl>
-                <a href="/" class="btn btn-primary mt-3">Back to Home</a>
-            </div>
+                <!-- Exibindo a data da última atualização -->
+                <dt class="col-sm-3">Updated At:</dt>
+                <dd class="col-sm-9">{{ user.updated_at.strftime("%Y-%m-%d %H:%M:%S") }}</dd>
+            </dl>
+            <!-- Botão para voltar à página inicial -->
+            <a href="/" class="btn btn-primary mt-3">Back to Home</a>
         </div>
     </div>
+</div>
 {% endblock content %}

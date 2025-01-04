@@ -1,23 +1,28 @@
 {% extends 'base.html' %}
- 
+
 {% block content %}
+<!-- Início do formulário para adicionar um novo usuário -->
 <form action="/add" method="post"> 
     <div class="mb-3">
+        <!-- Campo para o nome do usuário -->
         <label>Name</label>
         <input type="text" name="name" placeholder="Name" class="form-control" />
     </div> 
     <div class="mb-3">
+        <!-- Campo para a descrição do usuário -->
         <label>Description</label>
         <input type="text" name="description" placeholder="Description" class="form-control" />
     </div> 
     <div class="mb-3">
+        <!-- Campo para selecionar o progresso do usuário -->
         <label>Progress</label>
         <select name="progress" class="form-control">
-            <option value="open">Open</option>
-            <option value="in progress">In Progress</option>
-            <option value="completed">Completed</option>
+            <option value="open">Open</option> <!-- Opção para "Open" -->
+            <option value="in progress">In Progress</option> <!-- Opção para "In Progress" -->
+            <option value="completed">Completed</option> <!-- Opção para "Completed" -->
         </select>
     </div>
+    <!-- Botão para submeter o formulário -->
     <input type="submit" value="Submit" class="btn btn-primary mb-3"/>  
 </form> 
 {% endblock content %}
