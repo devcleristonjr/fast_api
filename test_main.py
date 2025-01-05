@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from main import app  
+from main import app
 
 client = TestClient(app)
 
@@ -8,12 +8,12 @@ def test_create_task():
         "name": "Test Task",
         "description": "This is a test task",
         "progress": "open"
-    })
+    }, auth=("admin", "password"))
     assert response.status_code == 200
     assert response.json()["message"] == "Task created successfully"
 
 def test_list_tasks():
-    response = client.get("/tasks")
+    response = client.get("/tasks", auth=("admin", "password"))
     assert response.status_code == 200
     assert isinstance(response.json()["tasks"], list)
 
@@ -23,7 +23,7 @@ def test_update_task():
         "name": "Test Task",
         "description": "This is a test task",
         "progress": "open"
-    })
+    }, auth=("admin", "password"))
     task_id = response.json()["task"]["id"]
 
     # Atualiza a tarefa criada
@@ -31,7 +31,7 @@ def test_update_task():
         "name": "Updated Task",
         "description": "This is an updated test task",
         "progress": "in progress"
-    })
+    }, auth=("admin", "password"))
     assert response.status_code == 200
     assert response.json()["message"] == "Task updated successfully"
 
@@ -41,11 +41,11 @@ def test_delete_task():
         "name": "Test Task",
         "description": "This is a test task",
         "progress": "open"
-    })
+    }, auth=("admin", "password"))
     task_id = response.json()["task"]["id"]
 
     # Deleta a tarefa criada
-    response = client.delete(f"/tasks/delete/{task_id}")
+    response = client.delete(f"/tasks/delete/{task_id}", auth=("admin", "password"))
     assert response.status_code == 200
     assert response.json()["message"] == "Task deleted successfully"
 
@@ -55,10 +55,10 @@ def test_get_task():
         "name": "Test Task",
         "description": "This is a test task",
         "progress": "open"
-    })
+    }, auth=("admin", "password"))
     task_id = response.json()["task"]["id"]
 
     # Recupera a tarefa criada
-    response = client.get(f"/tasks/{task_id}")
+    response = client.get(f"/tasks/{task_id}", auth=("admin", "password"))
     assert response.status_code == 200
     assert "task" in response.json()

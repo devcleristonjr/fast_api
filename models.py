@@ -18,7 +18,7 @@ current_time = datetime.now(br_timezone)
 
 # Definindo a classe Task que representa a tabela 'tasks' no banco de dados
 class Task(Base):
-    __tablename__ = 'tasks'  # Nome da tabela no banco de dados
+    __tablename__ = 'tasks'  
     
     id = Column(Integer, primary_key=True)
     name = Column(String(150)) 
