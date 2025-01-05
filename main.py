@@ -1,104 +1,124 @@
-# Importando as bibliotecas necessárias do FastAPI, SQLAlchemy e outras
 from fastapi import FastAPI, Request, Depends, Form, status
 from fastapi.templating import Jinja2Templates
 import models
 from database import engine, sessionlocal
-from sqlalchemy.orm import Session, declarative_base
+from sqlalchemy.orm import Session
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Enum
-import enum
+from pydantic import BaseModel
 
-# Importando o modelo ProgressStatus de models
-from models import ProgressStatus
-
-# Criando as tabelas no banco de dados com base nos modelos
 models.Base.metadata.create_all(bind=engine)
-
-# Configurando a renderização dos templates com Jinja2
 templates = Jinja2Templates(directory="templates")
 
-# Inicializando a aplicação FastAPI
 app = FastAPI()
-
-# Configurando o acesso aos arquivos estáticos (CSS, JS, etc.)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Função que retorna uma sessão de banco de dados
-def get_db():
-    db = sessionlocal()  # Cria uma sessão de banco de dados
-    try:
-        yield db  # Retorna a sessão para ser usada nas rotas
-    finally:
-        db.close()  # Fecha a sessão após o uso
+class TaskItem(BaseModel):
+    id: int | None = None
+    name: str
+    description: str
+    created_at: str | None = None
+    updated_at: str | None = None
+    progress: str
 
-# Rota principal que exibe a lista de usuários
+def get_db():
+    db = sessionlocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Rota principal que exibe a lista de tasks
 @app.get("/")
 async def home(request: Request, db: Session = Depends(get_db)):
-    # Consultando todos os usuários ordenados por ID
-    users = db.query(models.User).order_by(models.User.id.desc()).all()
-    # Retorna o template index.html com a lista de usuários
-    return templates.TemplateResponse("index.html", {"request": request, "users": users})
+    tasks = db.query(models.Task).order_by(models.Task.id.desc()).all()
 
-# Rota para adicionar um novo usuário
+    return templates.TemplateResponse("index.html", {"request": request, "tasks": tasks})
+
+# Rota para adicionar um novo tasks
 @app.post("/add")
-async def add(request: Request, name: str = Form(...), description: str = Form(...), progress: ProgressStatus = Form(...), db: Session = Depends(get_db)):
-    # Criando um novo usuário com os dados fornecidos
-    user = models.User(name=name, description=description, progress=progress)
-    db.add(user)  # Adiciona o usuário ao banco de dados
-    db.commit()  # Commit da transação para salvar no banco
-    db.refresh(user)  # Atualiza o objeto para garantir que ele tenha todos os dados (como timestamps)
-    # Redireciona para a página principal
+async def add(
+        request: Request, 
+        name: str = Form(...),
+        description: str = Form(...),
+        progress: str = Form(...),
+        db: Session = Depends(get_db)
+    ):
+    """ Teste de texto no docs"""
+    
+    task = models.Task(
+        name=name, 
+        description=description, 
+        progress=progress
+    )
+
+    db.add(task) 
+    db.commit() 
+    db.refresh(task) 
+
     return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)
 
-# Rota para exibir os detalhes de um usuário
-@app.get("/user/{user_id}")
-async def get_user(user_id: int, request: Request, db: Session = Depends(get_db)):
-    # Buscando o usuário no banco de dados
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        # Se o usuário não for encontrado, retorna a página de erro
-        return templates.TemplateResponse("user_not_found.html", {"request": request, "user_id": user_id})
-    # Log para verificar os dados do usuário (utilizado para debugging)
-    print(f"User data: {user}")
-    # Retorna o template com os detalhes do usuário
-    return templates.TemplateResponse("user_detail.html", {"request": request, "user": user})
+# Rota para adicionar um novo task (para mostrar uso do Pydantic)
+@app.post("/add_via_post")
+async def add(
+        request: Request, 
+        taskItem: TaskItem,
+        db: Session = Depends(get_db)
+    ):
+    
+    task = models.Task(
+        name=taskItem.name, 
+        description=taskItem.description, 
+        progress=taskItem.progress
+    )
 
-# Rota para exibir o formulário de adição de novo usuário
+    db.add(task) 
+    db.commit() 
+    db.refresh(task) 
+
+    return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)
+
+# Rota para exibir o formulário de adição de novo tasks
 @app.get("/addnew")
 async def addnew(request: Request):
     return templates.TemplateResponse("addnew.html", {"request": request})
 
-# Rota para exibir o formulário de edição de um usuário
-@app.get("/edit/{user_id}")
-async def edit(request: Request, user_id: int, db: Session = Depends(get_db)):
-    # Buscando o usuário para editar
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    # Retorna o template de edição com os dados do usuário
-    return templates.TemplateResponse("edit.html", {"request": request, "user": user})
+# Rota para exibir os detalhes de um tasks
+@app.get("/task/{task_id}")
+async def get_task(task_id: int, request: Request, db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        return templates.TemplateResponse("task_not_found.html", {"request": request, "task_id": task_id})
+    
+    print(f"Task data: {task}")
+    return templates.TemplateResponse("task_detail.html", {"request": request, "task": task})
 
-# Rota para atualizar os dados de um usuário
-@app.post("/update/{user_id}")
-async def update(request: Request, user_id: int, name: str = Form(...), description: str = Form(...), progress: ProgressStatus = Form(...), db: Session = Depends(get_db)):
-    # Buscando o usuário no banco de dados
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if user:
-        # Atualiza os dados do usuário
-        user.name = name
-        user.description = description
-        user.progress = progress
-        db.commit()  # Commit da transação para salvar as alterações no banco
-        db.refresh(user)  # Atualiza o objeto para refletir as mudanças
-    # Redireciona para a página principal após a atualização
+# Rota para exibir o formulário de edição de um tasks
+@app.put("/edit/{task_id}")
+async def edit(request: Request, task_id: int, db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+
+    return templates.TemplateResponse("edit.html", {"request": request, "task": task})
+
+# Rota para atualizar os dados de um tasks
+@app.put("/update/{task_id}")
+async def update(request: Request, task_id: int, name: str = Form(...), description: str = Form(...), progress: str = Form(...), db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if task:
+        task.name = name
+        task.description = description
+        task.progress = progress
+        
+        db.commit()
+        db.refresh(task)
+
     return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)
 
-# Rota para excluir um usuário
-@app.get("/delete/{user_id}")
-async def delete(request: Request, user_id: int, db: Session = Depends(get_db)):
-    # Buscando o usuário a ser excluído
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    db.delete(user)  # Deleta o usuário do banco de dados
-    db.commit()  # Commit da transação para aplicar a exclusão
-    # Redireciona para a página principal após a exclusão
+# Rota para excluir um tasks
+@app.delete("/delete/{task_id}")
+async def delete(request: Request, task_id: int, db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    db.delete(task)
+    db.commit() 
+    
     return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)

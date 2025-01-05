@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3>Task Details</h3>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">ID:</dt>
+                <dd class="col-sm-9">{{ task.id }}</dd>
+
+                <dt class="col-sm-3">Name:</dt>
+                <dd class="col-sm-9">{{ task.name }}</dd>
+
+                <dt class="col-sm-3">Description:</dt>
+                <dd class="col-sm-9">{{ task.description }}</dd>
+
+                <dt class="col-sm-3">Progress:</dt>
+                <dd class="col-sm-9">{{ task.progress }}</dd>
+
+                <dt class="col-sm-3">Created At:</dt>
+                <dd class="col-sm-9">{{ task.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</dd>
+
+                <dt class="col-sm-3">Updated At:</dt>
+                <dd class="col-sm-9">{{ task.updated_at.strftime("%Y-%m-%d %H:%M:%S") }}</dd>
+            </dl>
+            <a href="/" class="btn btn-primary mt-3">Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
