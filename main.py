@@ -148,10 +148,15 @@ async def update(request: Request, task_id: int, name: str = Form(...), descript
 
     return {"error": "Invalid method"}
 # Rota para excluir um tasks
-@app.delete("/remove/{task_id}")
+@app.post("/remove/{task_id}")
 async def remove(request: Request, task_id: int, db: Session = Depends(get_db)):
-    task = db.query(models.Task).filter(models.Task.id == task_id).first()
-    db.delete(task)
-    db.commit() 
-    
-    return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)
+    form_data = await request.form()
+    method = form_data.get("_method")
+    if method == "delete":
+        task = db.query(models.Task).filter(models.Task.id == task_id).first()
+        if task:
+            db.delete(task)
+            db.commit()
+        return RedirectResponse(url=app.url_path_for("home"), status_code=status.HTTP_303_SEE_OTHER)
+    return {"error": "Invalid method"}
+

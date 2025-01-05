@@ -36,7 +36,10 @@
                             <td class="btn-group">
                                 <a href="task/{{ rs.id }}" class="btn btn-info">View Details</a> 
                                 <a href="edit/{{ rs.id }}" class="btn btn-success">Edit</a> 
-                                <a href="remove/{{ rs.id }}" class="btn btn-danger">Remove</a> 
+                                <form action="/remove/{{ rs.id }}" method="post" style="display:inline;">
+                                    <input type="hidden" name="_method" value="delete">
+                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}
