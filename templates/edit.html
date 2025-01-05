@@ -3,31 +3,24 @@
 {% block content %}
 
 <form action="/update/{{task.id}}" method="post">
+    <input type="hidden" name="method" value="put">
     <div class="mb-3">
-       
         <label>Name</label>
-        
         <input type="text" name="name" placeholder="Name" class="form-control" value="{{task.name}}"/>
     </div> 
     <div class="mb-3">
-       
         <label>Description</label>
-        
         <input type="text" name="description" placeholder="Description" class="form-control" value="{{task.description}}"/>
     </div> 
     <div class="mb-3">
-        
         <label>Progress</label>
         <select name="progress" class="form-control">
-            
             <option value="open" {% if task.progress == 'open' %}selected{% endif %}>Open</option>
-            
             <option value="in progress" {% if task.progress == 'in progress' %}selected{% endif %}>In Progress</option>
-            
             <option value="completed" {% if task.progress == 'completed' %}selected{% endif %}>Completed</option>
         </select>
     </div>
     
     <input type="submit" value="Update" class="btn btn-primary mb-3"/>  
-</form> 
+</form>
 {% endblock content %}
